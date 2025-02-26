@@ -1,4 +1,6 @@
 import { Router } from 'express'
+import wrap from '../util/wrapError'
+import { registerService } from '../service/auth.service'
 
 const getAuthRouter = () => {
   const router = Router()
@@ -8,27 +10,61 @@ const getAuthRouter = () => {
    *   - name: Authentication
    *     description: APIs related to authentication
    */
+
   /**
    * @swagger
-   * /auth/hello:
-   *   get:
-   *     summary: Returns a greeting message
+   * /register:
+   *   post:
+   *     summary: Register a new user
+   *     description: Creates a new user account
    *     tags: [Authentication]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - username
+   *               - password
+   *               - full_name
+   *               - email
+   *             properties:
+   *               username:
+   *                 type: string
+   *                 example: johndoe
+   *               password:
+   *                 type: string
+   *                 example: "StrongPassword123!"
+   *               full_name:
+   *                 type: string
+   *                 example: "John Doe"
+   *               gender:
+   *                 type: string
+   *                 enum: [male, female, other]
+   *                 example: "male"
+   *               email:
+   *                 type: string
+   *                 format: email
+   *                 example: "johndoe@example.com"
+   *               age:
+   *                 type: integer
+   *                 example: 25
    *     responses:
    *       200:
-   *         description: A successful response
+   *         description: User registered successfully
    *         content:
    *           application/json:
    *             schema:
    *               type: object
    *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Hello, world!"
+   *                 rs:
+   *                   type: object
+   *       400:
+   *         description: Bad request, invalid input
    */
-  router.get('/hello', (req, res) => {
-    res.json({ message: 'Hello, world!' })
-  })
+  router.post('/register', wrap(registerService))
+
   return router
 }
 

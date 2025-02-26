@@ -7,7 +7,9 @@ CREATE TABLE "user" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"username" varchar(255) NOT NULL,
 	"password" varchar(255) NOT NULL,
-	"role_id" integer
+	"role_id" integer,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "user_address" (
@@ -19,7 +21,7 @@ CREATE TABLE "user_address" (
 );
 --> statement-breakpoint
 CREATE TABLE "user_info" (
-	"id" integer PRIMARY KEY NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" integer,
 	"full_name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,

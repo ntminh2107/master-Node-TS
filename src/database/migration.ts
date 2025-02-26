@@ -37,7 +37,7 @@ export const migrationDB = async () => {
     }
     await client.end()
   } catch (err) {
-    console.error('cannot connect to db')
+    console.error('cannot connect to db', err)
   }
 }
 

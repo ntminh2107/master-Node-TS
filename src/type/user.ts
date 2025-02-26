@@ -5,8 +5,8 @@ export interface User {
   username: string
   password: string
   role: Role
-  information: UserInfo
-  address: UserAddress
+  information?: UserInfo
+  address?: UserAddress
 }
 
 export interface UserInfo {

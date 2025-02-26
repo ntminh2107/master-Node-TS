@@ -1,27 +1,30 @@
-import dotenv from "dotenv";
-dotenv.config();
+import dotenv from 'dotenv'
+dotenv.config()
 
-import express, { Request, Response } from "express";
-import { connectionDB } from "./database/connection";
-import cors from "cors";
-import applyMiddlewares from "./middleware/middleware";
+import express, { Request, Response } from 'express'
+import { connectionDB } from './database/connection'
+import cors from 'cors'
+import applyMiddlewares from './middleware/middleware'
+import getRouter from './router/router'
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const app = express()
+const PORT = process.env.PORT || 3000
 
 const start = async () => {
-  app.use(applyMiddlewares());
-  app.use(cors());
+  app.use(applyMiddlewares())
+  app.use(cors())
 
-  app.get("/healthcheck", (req: Request, res: Response) => {
-    res.json("Hello, Express with TypeScript!");
-  });
+  app.get('/healthcheck', (req: Request, res: Response) => {
+    res.json('Hello, Express with TypeScript!')
+  })
+
+  app.use('/api', getRouter())
 
   app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-  });
-};
+    console.log(`Server is running on http://localhost:${PORT}`)
+  })
+}
 
 Promise.all([connectionDB()])
   .then(async () => await start())
-  .catch((err) => console.log(err));
+  .catch((err) => console.log(err))

@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import { Client } from 'pg'
 import dotenv from 'dotenv'
 import { migrate } from 'drizzle-orm/node-postgres/migrator'
-import { tblRole } from '../schema/role.tbl'
+import { tblRole } from '../schema/role.schema'
 
 dotenv.config()
 export const migrationDB = async () => {

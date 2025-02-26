@@ -1,5 +1,5 @@
 import { integer, pgTable, serial, varchar } from 'drizzle-orm/pg-core'
-import { tblRole } from './role.tbl'
+import { tblRole } from './role.schema'
 
 export const tblUser = pgTable('user', {
   id: serial().primaryKey(),

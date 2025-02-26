@@ -1,1 +1,0 @@
-ALTER TABLE "user_info" ADD COLUMN "email" varchar(255) NOT NULL;

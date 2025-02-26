@@ -2,12 +2,18 @@ import { Router } from 'express'
 
 const getAuthRouter = () => {
   const router = Router()
-
+  /**
+   * @swagger
+   * tags:
+   *   - name: Authentication
+   *     description: APIs related to authentication
+   */
   /**
    * @swagger
    * /auth/hello:
    *   get:
    *     summary: Returns a greeting message
+   *     tags: [Authentication]
    *     responses:
    *       200:
    *         description: A successful response

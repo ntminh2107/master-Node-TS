@@ -7,6 +7,28 @@ const getRouter = () => {
 
   router.use('/auth', getAuthRouter())
 
+  /**
+   * @swagger
+   * tags:
+   *   - name: HealthCheck
+   *     description: API health monitoring
+   *
+   * /healthcheck:
+   *   get:
+   *     summary: Check the health of the API
+   *     tags: [HealthCheck]
+   *     responses:
+   *       200:
+   *         description: API is up and running
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Hello, Express with TypeScript!"
+   */
   router.get(
     '/healthcheck',
     wrap((req: Request, res: Response) => {

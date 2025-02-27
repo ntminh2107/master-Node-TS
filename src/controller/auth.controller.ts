@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, eq, or } from 'drizzle-orm'
 import { tblUser, tblUserInfo } from '../schema/user.schema'
 import { getDBclient } from '../database/connection'
 import bcrypt from 'bcrypt'
@@ -90,7 +90,7 @@ export const addNewUser = async ({
   }
 }
 
-export const checkUser = async ({
+export const checkUserLogin = async ({
   username,
   password
 }: {
@@ -110,12 +110,26 @@ export const checkUser = async ({
       })
       .from(tblUser)
       .innerJoin(tblUserInfo, eq(tblUser.id, tblUserInfo.user_id))
-      .where(and(eq(tblUser.username, username)))
+      .where(
+        or(eq(tblUser.username, username), eq(tblUserInfo.email, username))
+      )
 
     if (checkUser.length <= 0 && !checkUser) {
       return {
         success: false,
         message: `User ${username} can not be found !!!`
+      }
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      password,
+      checkUser[0].password
+    )
+
+    if (!isValidPassword) {
+      return {
+        success: false,
+        message: 'Invalid password'
       }
     }
 

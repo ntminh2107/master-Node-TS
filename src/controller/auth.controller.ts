@@ -1,5 +1,5 @@
 import { and, eq } from 'drizzle-orm'
-import { tblUser, tblUserInfo } from '../schema/user.tbl'
+import { tblUser, tblUserInfo } from '../schema/user.schema'
 import { getDBclient } from '../database/connection'
 import bcrypt from 'bcrypt'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
@@ -34,7 +34,8 @@ export const addNewUser = async ({
       .where(and(eq(tblUser.username, username), eq(tblUserInfo.email, email)))
     if (checkUser.length > 0) {
       return {
-        message: 'username or email already exist, please try again'
+        success: false,
+        message: 'User already existed, pls try another username and email !!!'
       }
     } else {
       const hashedPassword = await bcrypt.hash(password, 10)
@@ -67,16 +68,25 @@ export const addNewUser = async ({
         })
 
       return {
-        id: rsUser[0].id,
-        username: rsUser[0].username,
-        full_name: rsUserInfo[0].full_name,
-        email: rsUserInfo[0].email,
-        age: rsUserInfo[0].age,
-        gender: rsUserInfo[0].gender
+        success: true,
+        message: 'Registered successful!!!',
+        user: {
+          id: rsUser[0].id,
+          username: rsUser[0].username,
+          full_name: rsUserInfo[0].full_name,
+          email: rsUserInfo[0].email,
+          age: rsUserInfo[0].age,
+          gender: rsUserInfo[0].gender
+        }
       }
     }
   } catch (error) {
     console.log('error: ', error)
+    return {
+      success: false,
+      message: 'An error occurred during register',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
   }
 }
 
@@ -86,4 +96,42 @@ export const checkUser = async ({
 }: {
   username: string
   password: string
-}) => {}
+}) => {
+  try {
+    const checkUser = await db
+      .select({
+        id: tblUser.id,
+        username: tblUser.username,
+        password: tblUser.password,
+        full_name: tblUserInfo.full_name,
+        email: tblUserInfo.email,
+        age: tblUserInfo.age,
+        gender: tblUserInfo.gender
+      })
+      .from(tblUser)
+      .innerJoin(tblUserInfo, eq(tblUser.id, tblUserInfo.user_id))
+      .where(and(eq(tblUser.username, username)))
+
+    if (checkUser.length <= 0 && !checkUser) {
+      return {
+        success: false,
+        message: `User ${username} can not be found !!!`
+      }
+    }
+
+    const { password: _, ...userInformation } = checkUser[0]
+
+    return {
+      success: true,
+      message: 'Login successful',
+      user: userInformation
+    }
+  } catch (error) {
+    console.log('error: ', error)
+    return {
+      success: false,
+      message: 'An error occurred during login',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+}

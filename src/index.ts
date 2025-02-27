@@ -20,7 +20,7 @@ const startServer = async () => {
 
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on http://localhost:${PORT}`)
-      app.use(getRouter())
+      app.use('/api', getRouter())
       swaggerDocs(app, Number(PORT))
     })
   } catch (err) {

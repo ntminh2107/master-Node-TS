@@ -13,7 +13,7 @@ const getAuthRouter = () => {
 
   /**
    * @swagger
-   * /register:
+   * /api/auth/register:
    *   post:
    *     summary: Register a new user
    *     description: Creates a new user account
@@ -60,6 +60,25 @@ const getAuthRouter = () => {
    *               properties:
    *                 rs:
    *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: integer
+   *                       example: 1
+   *                     username:
+   *                       type: string
+   *                       example: johndoe
+   *                     full_name:
+   *                       type: string
+   *                       example: "John Doe"
+   *                     email:
+   *                       type: string
+   *                       example: "johndoe@example.com"
+   *                     age:
+   *                       type: integer
+   *                       example: 25
+   *                     gender:
+   *                       type: string
+   *                       example: "male"
    *       400:
    *         description: Bad request, invalid input
    */

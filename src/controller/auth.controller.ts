@@ -2,8 +2,6 @@ import { eq } from 'drizzle-orm'
 import { tblUser, tblUserInfo } from '../schema/user.tbl'
 import { getDBclient } from '../database/connection'
 
-const db = getDBclient()
-
 export const addNewUser = async ({
   username,
   password,
@@ -20,6 +18,8 @@ export const addNewUser = async ({
   age: number
 }) => {
   try {
+    const db = getDBclient()
+
     const checkUser = await db
       .select()
       .from(tblUser)

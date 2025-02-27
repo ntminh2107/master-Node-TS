@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import wrap from '../util/wrapError'
 import { registerService } from '../service/auth.service'
+import { validateRequest } from '../util/validationRequest'
+import { registerSchema } from '../validation/auth.validation'
 
 const getAuthRouter = () => {
   const router = Router()
@@ -93,7 +95,11 @@ const getAuthRouter = () => {
    *                   example: username already exist, please try again
    *
    */
-  router.post('/register', wrap(registerService))
+  router.post(
+    '/register',
+    validateRequest(registerSchema),
+    wrap(registerService)
+  )
 
   return router
 }

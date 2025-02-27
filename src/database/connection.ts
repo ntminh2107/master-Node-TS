@@ -15,13 +15,15 @@ export const connectionDB = async () => {
     await client.connect()
     console.log('=== CONNECT TO DB SUCCESS ===')
     dbClient = drizzle(client)
+    return dbClient
   } catch (err) {
-    console.error(err)
+    console.error('Database connection failed:', err)
+    throw err
   }
 }
 
 export const getDBclient = () => {
-  if (dbClient === null) {
+  if (!dbClient) {
     throw new Error('Database connection not initialized')
   }
   return dbClient

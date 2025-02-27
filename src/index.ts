@@ -7,13 +7,15 @@ import cors from 'cors'
 import applyMiddlewares from './middleware/middleware'
 import getRouter from './router/router'
 import swaggerDocs from './util/swagger'
+import { initializeController } from './controller/auth.controller'
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
 const startServer = async () => {
   try {
-    await connectionDB() // Ensure database connection is established before starting server
+    const dbClient = await connectionDB()
+    await initializeController(dbClient)
 
     app.use(applyMiddlewares())
     app.use(cors())

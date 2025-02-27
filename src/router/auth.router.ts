@@ -81,6 +81,17 @@ const getAuthRouter = () => {
    *                       example: "male"
    *       400:
    *         description: Bad request, invalid input
+   *       409:
+   *         description: username already exist
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: username already exist, please try again
+   *
    */
   router.post('/register', wrap(registerService))
 

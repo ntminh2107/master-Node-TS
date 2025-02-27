@@ -1,6 +1,15 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { tblUser, tblUserInfo } from '../schema/user.tbl'
 import { getDBclient } from '../database/connection'
+import bcrypt from 'bcrypt'
+import { NodePgDatabase } from 'drizzle-orm/node-postgres'
+
+let db: NodePgDatabase
+
+// Initialize function to be called after database connection
+export const initializeController = async (dbClient: NodePgDatabase) => {
+  db = dbClient
+}
 
 export const addNewUser = async ({
   username,
@@ -18,22 +27,22 @@ export const addNewUser = async ({
   age: number
 }) => {
   try {
-    const db = getDBclient()
-
     const checkUser = await db
       .select()
       .from(tblUser)
-      .where(eq(tblUser.username, username))
+      .innerJoin(tblUserInfo, eq(tblUserInfo.user_id, tblUser.id))
+      .where(and(eq(tblUser.username, username), eq(tblUserInfo.email, email)))
     if (checkUser.length > 0) {
       return {
-        message: 'username already exist, please try again'
+        message: 'username or email already exist, please try again'
       }
     } else {
+      const hashedPassword = await bcrypt.hash(password, 10)
       const rsUser = await db
         .insert(tblUser)
         .values({
           username: username,
-          password: password,
+          password: hashedPassword,
           role_id: 1
         })
         .returning({
@@ -70,3 +79,11 @@ export const addNewUser = async ({
     console.log('error: ', error)
   }
 }
+
+export const checkUser = async ({
+  username,
+  password
+}: {
+  username: string
+  password: string
+}) => {}

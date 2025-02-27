@@ -13,6 +13,9 @@ export const registerService = async (req: Request, res: Response) => {
       email: email,
       age: age
     })
+    if (rs?.message) {
+      return res.status(HttpStatusCode.CONFLICT).json(rs)
+    }
     res.status(HttpStatusCode.OK).json({ rs })
   } catch (error) {
     res.status(HttpStatusCode.BAD_REQUEST).json({ error: error })

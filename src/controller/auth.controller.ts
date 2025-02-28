@@ -3,6 +3,13 @@ import { tblUser, tblUserInfo } from '../schema/user.schema'
 import { getDBclient } from '../database/connection'
 import bcrypt from 'bcrypt'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
+import { setAuthTokens, setCookie } from '../util/cookieStore'
+import { Response } from 'express'
+import {
+  generateAccessToken,
+  generateRefreshToken
+} from '../util/jwtAuthentication'
+import { tblRole } from '../schema/role.schema'
 
 let db: NodePgDatabase
 
@@ -92,10 +99,12 @@ export const addNewUser = async ({
 
 export const checkUserLogin = async ({
   username,
-  password
+  password,
+  response
 }: {
   username: string
   password: string
+  response: Response
 }) => {
   try {
     const checkUser = await db
@@ -106,10 +115,12 @@ export const checkUserLogin = async ({
         full_name: tblUserInfo.full_name,
         email: tblUserInfo.email,
         age: tblUserInfo.age,
+        role_name: tblRole.role_name,
         gender: tblUserInfo.gender
       })
       .from(tblUser)
       .innerJoin(tblUserInfo, eq(tblUser.id, tblUserInfo.user_id))
+      .innerJoin(tblRole, eq(tblRole.id, tblUser.role_id))
       .where(
         or(eq(tblUser.username, username), eq(tblUserInfo.email, username))
       )
@@ -132,6 +143,18 @@ export const checkUserLogin = async ({
         message: 'Invalid password'
       }
     }
+
+    const accessToken = generateAccessToken(
+      checkUser[0].id,
+      checkUser[0].role_name
+    )
+
+    const refreshToken = generateRefreshToken(
+      checkUser[0].id,
+      checkUser[0].role_name
+    )
+
+    setAuthTokens(response, { accessToken, refreshToken })
 
     const { password: _, ...userInformation } = checkUser[0]
 

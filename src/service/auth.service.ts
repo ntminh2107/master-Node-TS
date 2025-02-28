@@ -30,7 +30,8 @@ export const loginService = async (req: Request, res: Response) => {
     const { username, password } = req.body
     const rs = await checkUserLogin({
       username: username,
-      password: password
+      password: password,
+      response: res
     })
     if (rs.success === false) {
       return res.status(HttpStatusCode.UNAUTHORIZED).json(rs)
